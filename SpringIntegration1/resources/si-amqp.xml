@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-amqp="http://www.springframework.org/schema/integration/amqp"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/integration/amqp http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
+    http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
+   
+   <import resource="classpath:rabbitmq_conf.xml"/>
+    
+    <int:channel id="tradeProducer"/>
+    
+    <int-amqp:outbound-channel-adapter id = "out-adapter" amqp-template="rabbit-template"
+      exchange-name="trade-exchange" routing-key="input-key" channel="tradeProducer"/>
+     
+     <int-amqp:inbound-channel-adapter id="in-adapter" queue-names="trade-input" 
+     channel="tradeOut"/>
+     
+     <int:channel id="tradeOut"/>
+     
+     <int:service-activator input-channel="tradeOut" ref = "helloGreet" method="sayHello" output-channel="tradeFinal"/>
+     <int:channel id="tradeFinal"></int:channel>
+     
+     <int-amqp:outbound-channel-adapter id = "out-adapter2" amqp-template="rabbit-template"
+      exchange-name="trade-exchange" routing-key="output-key" channel="tradeFinal"/>
+    
+</beans>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<rabbit:connection-factory id="rabbitConnectionFactory"
+		host="localhost" username="guest" password="" />
+	<rabbit:template id="rabbit-template" connection-factory="rabbitConnectionFactory"/>
+	<rabbit:admin id = "admin-rabbit" connection-factory="rabbitConnectionFactory"/>
+	
+	<rabbit:queue id = "Q1" name="trade-input"/>
+	<rabbit:queue id = "Q2" name="trade-output"/>
+	
+	<rabbit:direct-exchange name="trade-exchange" durable="true">
+		<rabbit:bindings>
+			<rabbit:binding queue="Q1" key="input-key"/>
+			<rabbit:binding queue="Q2" key="output-key"/>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+
+
+</beans>
